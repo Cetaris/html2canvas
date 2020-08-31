@@ -11,7 +11,7 @@ import {
     isStyleElement,
     isSVGElementNode,
     isTextareaElement,
-    isTextNode
+    isTextNode,
 } from './node-parser';
 import {Logger} from '../core/logger';
 import {isIdentToken, nonFunctionArgSeparator} from '../css/syntax/parser';
@@ -53,7 +53,7 @@ export class DocumentCloner {
             throw new Error('Cloned element does not have an owner document');
         }
 
-        this.documentElement = this.cloneNode(element.ownerDocument.documentElement) as HTMLElement;
+        this.documentElement = this.cloneNode(element) as HTMLElement;
     }
 
     toIFrame(ownerDocument: Document, windowSize: Bounds): Promise<HTMLIFrameElement> {
@@ -477,7 +477,7 @@ const iframeLoader = (iframe: HTMLIFrameElement): Promise<HTMLIFrameElement> => 
         cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = () => {
             cloneWindow.onload = iframe.onload = documentClone.onreadystatechange = null;
             const interval = setInterval(() => {
-                if (documentClone.body.childNodes.length > 0 && documentClone.readyState === 'complete') {
+                if (documentClone.childNodes.length > 0 && documentClone.readyState === 'complete') {
                     clearInterval(interval);
                     resolve(iframe);
                 }
